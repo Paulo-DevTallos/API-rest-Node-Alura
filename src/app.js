@@ -1,4 +1,7 @@
 const express = require('express')
+const booksController = require('./controller')
+const db = require('./db')
+
 const app = express()
 
 
@@ -10,24 +13,18 @@ const books = [
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
-app.get('/', (req, res) => {
-    res.status(200).send('express renderizou!')
-})
+db.dbConnect()
 
-app.get('/livros', (req, res) => {
+app.get('/livros', booksController.getAll)
+app.get('/livros/:id', booksController.getById)
+app.post('/livros', booksController.post)
+
+/*app.get('/livros', (req, res) => {
     res.status(200).json(books)
-})
+})*/
 
-app.get('/livros/:id', (req, res) => {
-    let index = buscarLivros(req.params.id)
-    res.json(books[index])
-})
 
 //post sempre tem que pegar o que vem no body
-app.post('/livros', (req, res) => {
-    books.push(req.body)
-    res.status(201).send('livro cadastrado com sucesso!')
-})
 
 app.put('/livros/:id', (req, res) => {
     let index = buscarLivros(req.params.id)
